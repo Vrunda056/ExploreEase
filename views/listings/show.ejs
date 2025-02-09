@@ -1,0 +1,136 @@
+<% layout("/layouts/boilerplate") %>
+
+    <div class="row">
+        <div class="col-md-6 offset-3" style="margin-left: 30%;" >
+            <h3><%= l.title %></h3>
+            <br/>
+            <div class="card" style="width: 34vw; ">
+                <img src="<%= l.image.url%>" class="card-img-top" alt="listing_image" style="height: 20rem;">
+                <i class="ms-auto" style="font-size: larger;">~<%= l.owner.username %></i>
+                <div class="card-body">
+                    <p class="card-text">
+                        <li><%= l.description %></li>
+                        <li> &#8377 <%= l.price.toLocaleString("en-IN") %></li>
+                        <li><%= l.location %></li>
+                        <li><%= l.country %></li>
+                    </p>
+                </div>
+            </div>
+            <% if(curruser && curruser._id.equals(l.owner._id)) { %>
+            <div class="btns">
+                <form method="GET", action="/test/<%= l._id %>/edit">
+                    <button class="btn btn-dark sbtn mb-4">Edit </button>
+                </form>
+                <form method="POST", action="/test/<%= l._id %>?_method=DELETE">
+                    <button class="btn btn-dark sbtn mb-4">Delete </button>
+                </form>
+            </div>
+            <% } %>
+        </div>
+
+        <div class="col-5 offset-3" style="margin-left: 30%;" >
+            <hr>
+            <% if(curruser) { %>
+            <h4>Leave a Review</h4>
+            
+            <form action="/test/<%= l._id %>/reviews" class="needs-validation" method="POST" novalidate>
+                <div class="mb-mt-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <fieldset class="starability-slot">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                      </fieldset>
+                </div>
+                <div class="mb-mt-3">
+                    <label for="comment" class="form-label">Comment</label>
+                    <textarea id="comment" class="form-control" name="review[comment]" cols="10" rows="3" required></textarea>
+                    <div class="invalid-feedback">Please write  comment.</div>
+                </div>
+                <button class=" btn btn-dark mb-4 mt-3">Submit</button>
+            </form>
+            <% } %>
+            
+            <% if(l.reviews.length > 0) { %>
+            <h4 class="mb-3">All Review</h4>
+            <div class="row">
+                <% for(let r of l.reviews) { %>
+                    <div class="r_card col-6 mb-3 ms-2" style="width: 16rem;">
+                        <div class="card-body">
+                          <h5 class="card-title mb-2">@ <%= r.author.username %></h5>
+                          <div class="starability-result card-text mb-1" data-rating="<%= r.rating %>" <%= r.comment %>></div>
+                          <div class="card-text mb-3"><%= r.comment %></div>
+                          <form method="POST", action="/test/<%= l._id %>/reviews/<%=r._id%>?_method=DELETE">
+                            <% if(curruser) { %>
+                                <button class="btn btn-dark mb-2">Delete </button>
+                            <% } %>
+                        </form>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            <% } %>
+        </div>
+        <div class="col-5 offset-3" style="margin-left: 30%;" >
+          <br>
+          <h3>Where you will be...</h3>
+          <br>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+<script>
+  // Function to get coordinates from location and country
+  async function getCoordinates(loc, con) {
+    const query = `${loc}, ${con}`;
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=1`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        return { lat, lon };
+      } else {
+        throw new Error('Location not found');
+      }
+    } catch (error) {
+      console.error('Error fetching coordinates:', error);
+      return null;
+    }
+  }
+
+  // Initialize the map with default coordinates
+  const map = L.map('map').setView([0, 0], 2);  // Initial global view
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Injected values for location and country
+  const loc = "<%= l.location %>"; // Ensure that this is correctly rendered by your templating engine
+  const con = "<%= l.country %>";   // Same for country
+
+  // Get coordinates and update the map
+  getCoordinates(loc, con).then(coords => {
+    if (coords) {
+      map.setView([coords.lat, coords.lon], 13);  // Center map on the location
+      L.marker([coords.lat, coords.lon]).addTo(map)
+        .bindPopup(`Marker in ${loc}, ${con}!`)
+        .openPopup();
+    } else {
+      alert("Location not found!");
+    }
+  });
+</script>
+
+

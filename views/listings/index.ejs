@@ -1,0 +1,129 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="filters">
+    <button id="scroll-left" class="scroll-btn">&#10094;</button> <!-- Left Arrow -->
+    <a href="/test/filter?category=Trending" class="filter" >    
+        <i class="fa-solid fa-fire"></i>
+        <p>Trending</p>
+    </a>
+    <a href="/test/filter?category=Boat" class="filter" >    
+        <i class="fa-solid fa-sailboat"></i>
+        <p>Boat</p>
+    </a>
+    <a href="/test/filter?category=Beach" class="filter" >    
+        <i class="fa-solid fa-person-swimming"></i>
+        <p>Beach</p>
+    </a>
+    <a href="/test/filter?category=Mountains" class="filter" >    
+        <i class="fa-solid fa-mountain-sun"></i>
+        <p>Mountains</p>
+    </a>
+    <a href="/test/filter?category=Domes" class="filter" >    
+        <i class="fa-solid fa-landmark-dome"></i>
+        <p>Domes</p>
+    </a>
+    <a href="/test/filter?category=Farm" class="filter" >    
+        <i class="fa-solid fa-seedling"></i>
+        <p>Farm</p>
+    </a>
+    <a href="/test/filter?category=Castles" class="filter" >    
+        <i class="fa-brands fa-fort-awesome"></i>
+        <p>Castles</p>
+    </a>
+    <a href="/test/filter?category=Arctic" class="filter" >    
+        <i class="fa-solid fa-snowflake"></i>
+        <p>Arctic</p>
+    </a>
+    <a href="/test/filter?category=Luxe" class="filter" >    
+        <i class="fa-solid fa-martini-glass-citrus"></i>
+        <p>Luxe</p>
+    </a>
+    <a href="/test/filter?category=Food" class="filter" >    
+        <i class="fa-solid fa-utensils"></i>
+        <p>Food</p>
+    </a>
+    <a href="/test/filter?category=Jungle" class="filter">
+        <i class="fa-solid fa-tree"></i>
+        <p>Jungle</p>
+    </a>
+    <a href="/test/filter?category=Waterfalls" class="filter">
+        <i class="fa-solid fa-water"></i>
+        <p>Waterfalls</p>
+    </a>
+    <a href="/test/filter?category=Cityscape" class="filter">
+        <i class="fa-solid fa-city"></i>
+        <p>Cityscape</p>
+    </a>
+    <a href="/test/filter?category=Caves" class="filter">
+        <i class="fa-solid fa-mountain"></i>
+        <p>Caves</p>
+    </a>
+    <a href="/test/filter?category=Forests" class="filter">
+        <i class="fa-solid fa-leaf"></i>
+        <p>Forests</p>
+    </a>
+    <a href="/test/filter?category=Nightlife" class="filter">
+        <i class="fa-solid fa-moon"></i>
+        <p>Nightlife</p>
+    </a>
+    <a href="/test/filter?category=Hot Springs" class="filter">
+        <i class="fa-solid fa-hot-tub-person"></i>
+        <p>Hot Springs</p>
+    </a>
+    <a href="/test/filter?category=Wildlife" class="filter">
+        <i class="fa-solid fa-paw"></i>
+        <p>Wildlife</p>
+    </a>
+    <a href="/test/filter?category=Countryside" class="filter">
+        <i class="fa-solid fa-house-chimney"></i>
+        <p>Countryside</p>
+    </a>
+    <a href="/test/filter?category=Temples" class="filter">
+        <i class="fa-solid fa-place-of-worship"></i>
+        <p>Temples</p>
+    </a>
+    <button id="scroll-right" class="scroll-btn">&#10095;</button> <!-- Right Arrow -->
+</div>
+<div class="taxswitch" >
+    <div class="form-check  form-check-reverse form-switch ">
+        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+        <label class="form-check-label swt" for="flexSwitchCheckDefault">Display total before tax</label>
+    </div>
+</div>
+
+    <br>
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 ">
+        <% for(let listing of alllist) { %>
+            <a href="/test/<%= listing._id %>" class="link">
+                <div class="card col">
+                    <img src="<%= listing.image.url %>" 
+                    class="card-img-top" alt="listing_image" style="height: 20rem;" >
+                    <div class="card-img-overlay"></div>
+                    <div class="card-body">
+                      <p class="card-text" >
+                        <h5><%= listing.title %></h5> 
+                        &#8377; <%= listing.price.toLocaleString("en-IN") %> / nights  
+                        &nbsp; &nbsp;<i class="tax-info"> +18% GST</i>
+                      </p>
+                    </div>
+                </div>   
+            </a>
+        <% } %>
+    </div>
+ 
+<script>
+    let taxswitch = document.getElementById("flexSwitchCheckDefault");
+    taxswitch.addEventListener("click",()=>{
+        let tax = document.getElementsByClassName("tax-info");
+        for(i of tax){
+            if(i.style.display != "inline"){
+                i.style.display = "inline";
+            }else{
+                i.style.display="none";
+            }
+        }
+    });
+</script> 
+
+
+    
